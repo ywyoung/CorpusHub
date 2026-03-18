@@ -1,0 +1,130 @@
+<div class="tasks-container">
+    <h2 class="tasks-title">我的任务</h2>
+    {% if tasks and tasks|length > 0 %}
+    <div class="tasks-list">
+        {% for t in tasks %}
+        <div class="task-card">
+            <div class="task-header">
+                <div class="task-book">{{ t.book_name }}</div>
+                <div class="task-file">{{ t.file_name }} · 第 {{ t.item_order }} 条</div>
+            </div>
+            <div class="task-status">
+                {% if t.edited_by_me %}
+                    <span class="status-badge me-done">我已校对</span>
+                {% elif t.edited_text %}
+                    <span class="status-badge done">已校对</span>
+                {% else %}
+                    <span class="status-badge pending">待校对</span>
+                {% endif %}
+            </div>
+            {% if t.admin_remark %}
+            <div class="task-admin-remark">
+                <i class="fas fa-exclamation-circle"></i> {{ t.admin_remark }}
+            </div>
+            {% endif %}
+            <div class="task-actions">
+                <a href="{{ url_for('edit_corpus', book_id=t.book_id, corpus_id=t.corpus_id) }}" class="btn">
+                    前往校对
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="no-tasks">
+        暂无分配任务，请联系管理员进行分配
+    </div>
+    {% endif %}
+</div>
+<style>
+    .tasks-container {
+        max-width: 900px;
+        margin: 0 auto;
+        height: calc(100vh - 100px);
+        overflow-y: auto;
+    }
+    .tasks-title {
+        text-align: center;
+        color: var(--primary-color);
+        margin-bottom: 20px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid #eee;
+    }
+    .tasks-list {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+    }
+    .task-card {
+        border: 1px solid #eee;
+        border-radius: 8px;
+        padding: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+    .task-header {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+    .task-book {
+        font-weight: bold;
+        color: #333;
+    }
+    .task-file {
+        color: #666;
+        font-size: 14px;
+    }
+    .task-status {
+        margin-top: 6px;
+    }
+    .status-badge {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 12px;
+    }
+    .status-badge.pending {
+        background-color: #fff3cd;
+        color: #856404;
+        border: 1px solid #ffeeba;
+    }
+    .status-badge.done {
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
+    .status-badge.me-done {
+        background-color: #cfe2ff;
+        color: #084298;
+        border: 1px solid #b6d4fe;
+    }
+    .task-actions .btn {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+    }
+    .task-actions .btn:hover {
+        background-color: var(--secondary-color);
+    }
+    .no-tasks {
+        text-align: center;
+        color: #666;
+        padding: 20px;
+    }
+    .task-admin-remark {
+        font-size: 13px;
+        color: #8a6d3b;
+        background: #fff8e1;
+        border: 1px solid #ffe0b2;
+        border-radius: 6px;
+        padding: 6px 8px;
+    }
+</style>

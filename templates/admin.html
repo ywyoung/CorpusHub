@@ -1,0 +1,304 @@
+<div class="admin-container">
+    <h2 class="admin-title">管理员后台</h2>
+    <div class="flash-messages">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash-message flash-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+    <div class="admin-section">
+        <h3 class="section-heading">批量导入学生</h3>
+        <form method="POST" action="{{ url_for('admin_import_students') }}" enctype="multipart/form-data" class="admin-form">
+            <div class="form-group">
+                <label for="student_excel">Excel 文件（表头：学号、姓名）</label>
+                <input type="file" id="student_excel" name="file" accept=".xlsx,.xls" required>
+            </div>
+            <button type="submit" class="btn">导入学生名单</button>
+        </form>
+    </div>
+    <div class="admin-section">
+        <h3 class="section-heading">任务分配（按文本字节数均衡）</h3>
+        <form method="POST" action="{{ url_for('admin_assign_tasks') }}" class="admin-form">
+            <div class="form-group">
+                <label for="assign_book">选择书籍</label>
+                <select id="assign_book" name="book_id" required>
+                    {% for b in books %}
+                    <option value="{{ b.id }}">{{ b.name }}（进度 {{ b.progress }}%）</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label>选择参与学生</label>
+                <div class="students-list">
+                    {% for s in students %}
+                    <label class="student-item">
+                        <input type="checkbox" name="student_ids" value="{{ s.student_id }}"> {{ s.student_id }} - {{ s.name }}
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+            <button type="submit" class="btn">自动均衡分配</button>
+        </form>
+    </div>
+    <div class="admin-section">
+        <h3 class="section-heading">重置学生密码</h3>
+        <form method="POST" action="{{ url_for('admin_reset_password') }}" class="admin-form">
+            <div class="form-group">
+                <label for="target_username">用户名</label>
+                <input type="text" id="target_username" name="target_username" placeholder="按用户名重置，可留空">
+            </div>
+            <div class="form-group">
+                <label for="target_student_id">学号</label>
+                <input type="text" id="target_student_id" name="target_student_id" placeholder="按学号重置，可留空">
+            </div>
+            <div class="form-group">
+                <label for="new_password">新密码</label>
+                <input type="password" id="new_password" name="new_password" required>
+            </div>
+            <div class="form-group">
+                <label for="confirm_password">确认新密码</label>
+                <input type="password" id="confirm_password" name="confirm_password" required>
+            </div>
+            <button type="submit" class="btn">重置密码</button>
+        </form>
+    </div>
+    <div class="admin-section">
+        <h3 class="section-heading">学生提交管理</h3>
+        {% if submissions and submissions|length > 0 %}
+        <div class="submissions-list">
+            {% for s in submissions %}
+            <div class="submission-card">
+                <div class="submission-header">
+                    <div class="submission-book">{{ s.book_name }}</div>
+                    <div class="submission-file">{{ s.file_name }} · 第 {{ s.item_order }} 条</div>
+                </div>
+                <div class="submission-meta">
+                    <span>最近提交人：{{ s.user }}</span>
+                    <span>提交时间：{{ s.edited_at }}</span>
+                    {% if s.admin_modified %}
+                    <span class="admin-flag">管理员已处理</span>
+                    {% endif %}
+                </div>
+                {% if s.admin_remark %}
+                <div class="admin-remark">
+                    备注：{{ s.admin_remark }}
+                </div>
+                {% endif %}
+                <div class="submission-content">
+                    <div class="original-block">
+                        <strong>原文：</strong>
+                        <div class="text-box">{{ s.original_text }}</div>
+                    </div>
+                    <div class="edited-block">
+                        <strong>学生稿：</strong>
+                        <div class="text-box">{{ s.edited_text }}</div>
+                    </div>
+                </div>
+                <div class="submission-actions">
+                    <form method="POST" action="{{ url_for('admin_edit_submission') }}" class="inline-form">
+                        <input type="hidden" name="corpus_id" value="{{ s.corpus_id }}">
+                        <div class="form-group">
+                            <label>新的文本</label>
+                            <textarea name="new_text" rows="3" placeholder="输入要替换为的文本"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>备注</label>
+                            <input type="text" name="remark" placeholder="此条已由管理员修改">
+                        </div>
+                        <button type="submit" class="btn">保存管理员修改</button>
+                    </form>
+                    <form method="POST" action="{{ url_for('admin_delete_submission') }}" class="inline-form">
+                        <input type="hidden" name="corpus_id" value="{{ s.corpus_id }}">
+                        <div class="form-group">
+                            <label>备注</label>
+                            <input type="text" name="remark" placeholder="此条已由管理员删除学生提交">
+                        </div>
+                        <button type="submit" class="btn danger">删除学生提交</button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="no-submissions">暂无学生提交记录</div>
+        {% endif %}
+    </div>
+</div>
+<style>
+    .admin-container {
+        max-width: 700px;
+        margin: 0 auto;
+        background: white;
+        padding: 25px;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        height: calc(100vh - 100px);
+        overflow-y: auto;
+    }
+    .admin-title {
+        text-align: center;
+        color: var(--primary-color);
+        margin-bottom: 20px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid #eee;
+    }
+    .admin-section {
+        margin-top: 10px;
+    }
+    .flash-messages {
+        margin-bottom: 15px;
+    }
+    .flash-message {
+        padding: 10px 15px;
+        border-radius: 4px;
+        margin-bottom: 10px;
+    }
+    .flash-success {
+        background-color: #dff0d8;
+        color: #3c763d;
+        border: 1px solid #d6e9c6;
+    }
+    .flash-error {
+        background-color: #f2dede;
+        color: #a94442;
+        border: 1px solid #ebccd1;
+    }
+    .section-heading {
+        color: var(--primary-color);
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 1px dashed #ddd;
+        display: flex;
+        align-items: center;
+    }
+    .admin-form .form-group {
+        margin-bottom: 15px;
+    }
+    .admin-form label {
+        display: block;
+        margin-bottom: 6px;
+        font-weight: bold;
+        color: #555;
+    }
+    .admin-form input[type="text"],
+    .admin-form input[type="password"] {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 16px;
+    }
+    .admin-form select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 16px;
+    }
+    .students-list {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px 16px;
+        max-height: 220px;
+        overflow: auto;
+        border: 1px solid #eee;
+        padding: 10px;
+        border-radius: 6px;
+    }
+    .student-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+    }
+    .btn {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 10px 18px;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    .btn:hover {
+        background-color: var(--secondary-color);
+    }
+    .btn.danger {
+        background-color: #f44336;
+    }
+    .submissions-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+    .submission-card {
+        border: 1px solid #eee;
+        border-radius: 8px;
+        padding: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    .submission-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 8px;
+        font-weight: bold;
+    }
+    .submission-meta {
+        display: flex;
+        gap: 16px;
+        font-size: 13px;
+        color: #666;
+        margin-bottom: 8px;
+    }
+    .admin-flag {
+        color: #084298;
+        background: #cfe2ff;
+        padding: 2px 6px;
+        border-radius: 10px;
+        border: 1px solid #b6d4fe;
+    }
+    .admin-remark {
+        font-size: 14px;
+        color: #333;
+        background: #fff8e1;
+        border: 1px solid #ffe0b2;
+        padding: 8px;
+        border-radius: 6px;
+        margin-bottom: 8px;
+    }
+    .submission-content {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-bottom: 10px;
+    }
+    .text-box {
+        border: 1px solid #eee;
+        border-radius: 6px;
+        padding: 8px;
+        min-height: 60px;
+        background: #fafafa;
+    }
+    .submission-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+    .inline-form .form-group {
+        margin-bottom: 8px;
+    }
+    .inline-form textarea, .inline-form input[type="text"] {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+    @media (max-width: 768px) {
+        .submission-content, .submission-actions {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
