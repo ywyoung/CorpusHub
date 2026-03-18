@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文本语料校对系统 - 欢迎页</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4a6fa5;
+            --secondary-color: #6b8cae;
+            --accent-color: #4CAF50;
+            --light-gray: #f5f7fa;
+            --dark-gray: #333;
+            --border-color: #ddd;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            background-color: #f0f2f5;
+            color: #333;
+        }
+        
+        .hero {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+        
+        .hero h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .hero p {
+            opacity: 0.9;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: -30px auto 0;
+            padding: 0 20px 40px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+        }
+        
+        .cta {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            font-size: 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-login {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+        }
+        
+        .btn-login:hover {
+            background-color: #3a5f8a;
+            transform: translateY(-2px);
+        }
+        
+        .btn-register {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+        }
+        
+        .btn-register:hover {
+            background-color: #3d8b40;
+            transform: translateY(-2px);
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+            margin-top: 25px;
+        }
+        
+        .feature {
+            background: #f9f9f9;
+            border-radius: 8px;
+            padding: 15px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .feature h3 {
+            color: var(--primary-color);
+            margin: 0 0 8px 0;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .feature p {
+            color: #555;
+            line-height: 1.6;
+            margin: 0;
+        }
+        
+        .footer-tip {
+            text-align: center;
+            color: #777;
+            margin-top: 18px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="hero">
+        <h1><i class="fas fa-book-open"></i> 文本语料校对系统</h1>
+        <p>智能生成熟语料，助力高效校对</p>
+    </div>
+    
+    <div class="container">
+        <div class="card">
+            <div class="cta">
+                <a class="btn btn-login" href="/loginpage"><i class="fas fa-sign-in-alt"></i> 登录</a>
+                <a class="btn btn-register" href="/registpage"><i class="fas fa-user-plus"></i> 注册</a>
+            </div>
+            
+            <div class="features">
+                <div class="feature">
+                    <h3><i class="fas fa-spell-check"></i> 自动生成</h3>
+                    <p>上传PDF文件，智能生成成熟语料库，无需手动输入。</p>
+                </div>
+                <div class="feature">
+                    <h3><i class="fas fa-chart-bar"></i> 统计分析</h3>
+                    <p>提供词频与词云分析，辅助把握文本整体特征。</p>
+                </div>
+                <div class="feature">
+                    <h3><i class="fas fa-tasks"></i> 任务分配</h3>
+                    <p>按字节数均衡分配任务，合理安排校对进度。</p>
+                </div>
+                <div class="feature">
+                    <h3><i class="fas fa-history"></i> 历史记录</h3>
+                    <p>查看校对历史，追踪问题与修改建议。</p>
+                </div>
+            </div>
+            
+            <div class="footer-tip">
+                <span>登录后即可进入熟语料校对与文本校对功能</span>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
